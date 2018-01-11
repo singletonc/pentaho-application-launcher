@@ -31,9 +31,11 @@ import org.pentaho.commons.launcher.config.Parameters;
 import org.pentaho.commons.launcher.util.FileUtil;
 import org.pentaho.commons.launcher.util.StringUtil;
 
+import org.pentaho.di.ui.spoon.Spoon;
+
 /**
  * Launcher for Java classes. Allows to modify the classpath at runtime instead of relying on the jar-mechanism.
- * 
+ *
  * @author Thomas Morgner
  * @noinspection UseOfSystemOutOrSystemErr
  * @noinspection AssignmentToForLoopParameter
@@ -88,6 +90,10 @@ public class Launcher {
     // Invoke main(..)
     final String[] newArgs = new String[args.length - parameters.getParsedArgs()];
     System.arraycopy( args, parameters.getParsedArgs(), newArgs, 0, newArgs.length );
+
+    final Method getInstanceMethod = mainClass.getMethod("getInstance");
+    Spoon spoon = (Spoon) getInstanceMethod.invoke(null);
+
     final Method method = mainClass.getMethod( "main", new Class[] { String[].class } );
     method.invoke( null, new Object[] { newArgs } );
   }
